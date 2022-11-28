@@ -1,47 +1,63 @@
+const bcryptjs = require('bcryptjs');
+
+const User = require('../models/user');
 
 
-const getUser = (req, res) => {
 
-    const { q, nombre = 'No name', apikey, page = 1, limit } = req.query;
+const getUser = async(req, res) => {
 
-    res.json({
-        msg: 'get API - controlador',
-        q,
-        nombre,
-        apikey,
-        page, 
-        limit
-    });
+    const { limit = 5, from = 0 } = req.query;
+    const query = { state: true };
+
+    const [ total, users ] = await Promise.all([
+        User.countDocuments( query ),
+        User.find( query )
+            .limit(Number( limit ))
+            .skip(Number( from ))
+    ]);
+
+    res.json({ total, users });
 };
 
 
-const createUser = (req, res) => {
+const createUser = async(req, res) => {
 
-    const { nombre, edad } = req.body;
+    const { name, nickname, email, pass, role } = req.body;
+    const user = new User({ name, nickname, email, pass, role });
 
-    res.json({
-        msg: 'post API - usuariosPost',
-        nombre, 
-        edad
-    });
+    const salt = bcryptjs.genSaltSync();
+    user.pass = bcryptjs.hashSync( pass, salt );
+
+    await user.save();
+
+    res.json({ user });
 };
 
 
-const updateUser = (req, res) => {
+const updateUser = async(req, res) => {
+
+    const { id } = req.params;
+    const { _id, pass, google, email, ...rest } = req.body;
+
+    if ( pass ) {
+        const salt = bcryptjs.genSaltSync();
+        rest.pass = bcryptjs.hashSync( pass, salt );
+    };
+
+    const user = await User.findByIdAndUpdate( id, rest );
+
+    res.json(user);
+};
+
+
+const deleteUser = async(req, res) => {
 
     const { id } = req.params;
 
-    res.json({
-        msg: 'put API - usuariosPut',
-        id
-    });
-};
+    const user = await User.findByIdAndUpdate( id, { state: false } );
+    const authUser = req.user;
 
-
-const deleteUser = (req, res) => {
-    res.json({
-        msg: 'delete API - usuariosDelete'
-    });
+    res.json({ user, authUser });
 };
 
 
