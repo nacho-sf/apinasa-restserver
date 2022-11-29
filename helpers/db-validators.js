@@ -22,16 +22,9 @@ const checkIdExists = async( id ) => {
     };
 };
 
-const checkNickExists = async( nickname ) => {
-    const nickExists = await User.findOne({ nickname });
-    if ( nickExists ) {
-        throw new Error(`Nick ${ nickname } is already registered`);
-    };
-};
 
 module.exports = { 
     checkRoleExists,
     checkEmailExists,
-    checkIdExists,
-    checkNickExists
+    checkIdExists
  };

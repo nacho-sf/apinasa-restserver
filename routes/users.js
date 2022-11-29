@@ -2,10 +2,12 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { validateFields } = require('../middlewares/validate-fields');
+const { validateFields,
+        validateJwt,
+        validateRoles,
+        validateAdminRole } = require('../middlewares');
 
-const { checkNickExists,
-        checkRoleExists,
+const { checkRoleExists,
         checkEmailExists,
         checkIdExists } = require('../helpers/db-validators');
 
@@ -28,8 +30,6 @@ router.put('/:id',[
 
 router.post('/',[
     check('name', 'Name is required').not().isEmpty(),
-    check('nickname', 'Nickname is required').not().isEmpty(),
-    check('nickname').custom( checkNickExists ),
     check('pass', 'Pass has contain six characters at least').isLength({ min:6 }),
     check('email', 'Email is not valid').isEmail(),
     check('email').custom( checkEmailExists ),
@@ -38,9 +38,9 @@ router.post('/',[
 ], createUser );
 
 router.delete('/:id',[
-    // jwtValidation,
-    // checkIsAdminRole,
-    // checkHasRole('ADMIN_ROLE', 'SUPER_ROLE'),
+    validateJwt,
+    //validateAdminRole,
+    validateRoles('ADMIN_ROLE', 'USER_ROLE'),
     check('id', 'Is not valid ID').isMongoId(),
     check('id').custom( checkIdExists ),
     validateFields

@@ -9,8 +9,7 @@ const UserSchema = Schema({
     },
     nickname: {
         type: String,
-        required: [true, 'Nickname is required'],
-        unique: true
+        default: 'John Doe'
     },
     email: {
         type: String,
