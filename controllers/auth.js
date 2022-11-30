@@ -59,7 +59,7 @@ const googleSignIn = async( req, res ) => {
     const { id_token } = req.body;
 
     try {
-        const { name, email, img } = await googleVerify( id_token );
+        const { email, name, img } = await googleVerify( id_token );
         
         let user = await User.findOne({ email });
 
