@@ -21,6 +21,4 @@ const jwtGeneration = ( uid = '' ) => {
 
 };
 
-
-
 module.exports = { jwtGeneration };

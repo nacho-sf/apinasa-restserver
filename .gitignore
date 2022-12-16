@@ -1,2 +1,5 @@
 node_modules/
+uploads/landings/**.*
+uploads/neas/**.*
+uploads/users/**.*
 .env

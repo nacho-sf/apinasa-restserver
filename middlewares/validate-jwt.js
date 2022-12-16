@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/user');
+const { User } = require('../models');
 
 const validateJwt = async( req, res, next ) => {
 
@@ -37,7 +37,7 @@ const validateJwt = async( req, res, next ) => {
     } catch ( error ) {
         console.log( error );
         res.status(401).json({
-            msg: 'Token is not valid'
+            msg: 'Token is not valid - Este'
         });
     };
 
